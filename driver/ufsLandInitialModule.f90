@@ -23,6 +23,9 @@ type, public :: initial_type
   real, allocatable, dimension(:,:)  :: soil_temperature
   real, allocatable, dimension(:,:)  :: soil_moisture
   real, allocatable, dimension(:,:)  :: soil_liquid
+  real, allocatable, dimension(:,:)  :: soil_temperature_interp
+  real, allocatable, dimension(:,:)  :: soil_moisture_interp
+  real, allocatable, dimension(:,:)  :: soil_liquid_interp
   integer                            :: iswater
   integer                            :: isurban
   integer                            :: isice
@@ -41,12 +44,15 @@ contains
   subroutine ReadInitial(this, namelist)
   
   use netcdf
+  use ufsLandNoahMPType
   use error_handling, only : handle_err
   
   class(initial_type)  :: this
   type(namelist_type)  :: namelist
   
   integer :: ncid, dimid, varid, status
+  integer :: errflg     ! CCPP error flag
+  character(len=128) :: errmsg     ! CCPP error message
   
   status = nf90_open(namelist%init_file, NF90_NOWRITE, ncid)
    if (status /= nf90_noerr) call handle_err(status)
@@ -77,6 +83,9 @@ contains
   allocate(this%soil_temperature     (namelist%subset_length,this%nlevels))
   allocate(this%soil_moisture        (namelist%subset_length,this%nlevels))
   allocate(this%soil_liquid          (namelist%subset_length,this%nlevels))
+  allocate(this%soil_temperature_interp (namelist%subset_length,namelist%num_soil_levels))
+  allocate(this%soil_moisture_interp (namelist%subset_length,namelist%num_soil_levels))
+  allocate(this%soil_liquid_interp (namelist%subset_length,namelist%num_soil_levels))
   
   status = nf90_inq_varid(ncid, "time", varid)
    if(status /= nf90_noerr) call handle_err(status)
@@ -151,6 +160,28 @@ contains
   status = nf90_get_var(ncid, varid, this%soil_liquid, &
        start = (/namelist%subset_start,1/), count = (/namelist%subset_length,this%nlevels/))
    if(status /= nf90_noerr) call handle_err(status)
+! no need to do any interpolation if this%nlevels = namelist%num_soil_levels
+   if(this%nlevels /= namelist%num_soil_levels) then
+     call noahmp_soil_init (namelist%subset_length              , & ! in
+                            namelist%num_soil_levels            , & ! in
+                            this%nlevels                        , & ! in
+                            this%soil_level_nodes               , & ! in
+                            namelist%soil_level_nodes           , & ! in
+                            this%soil_moisture%data             , & ! in
+                            this%soil_liquid%data               , & ! in
+                            this%soil_temperature%data          , & ! in
+                            soiltyp                             , & ! in
+                            this%soil_moisture_interp%data      , & ! out
+                            this%soil_liquid_interp%data        , & ! out
+                            this%soil_temperature_interp%data   , & ! out
+                            errmsg                              , & ! out
+                            errflg                  )               ! out
+         if(errflg /= 0) then
+           write(*,*) "noahmp_soil_init reporting an error"
+           write(*,*) errmsg
+           stop
+         end if
+   endif
 
   status = nf90_get_att(ncid, NF90_GLOBAL, "iswater", this%iswater)
   status = nf90_get_att(ncid, NF90_GLOBAL, "isice"  , this%isice)
