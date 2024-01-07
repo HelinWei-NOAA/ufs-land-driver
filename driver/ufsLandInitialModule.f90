@@ -168,13 +168,13 @@ contains
                             this%nlevels                        , & ! in
                             this%soil_level_nodes               , & ! in
                             namelist%soil_level_nodes           , & ! in
-                            this%soil_moisture%data             , & ! in
-                            this%soil_liquid%data               , & ! in
-                            this%soil_temperature%data          , & ! in
+                            this%soil_moisture                  , & ! in
+                            this%soil_liquid                    , & ! in
+                            this%soil_temperature               , & ! in
                             noahmp%static%soil_category%data    , & ! in
-                            this%soil_moisture_interp%data      , & ! out
-                            this%soil_liquid_interp%data        , & ! out
-                            this%soil_temperature_interp%data   , & ! out
+                            this%soil_moisture_interp           , & ! out
+                            this%soil_liquid_interp             , & ! out
+                            this%soil_temperature_interp        , & ! out
                             errmsg                              , & ! out
                             errflg                  )               ! out
          if(errflg /= 0) then

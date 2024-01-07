@@ -380,6 +380,7 @@ time_loop : do timestep = 1, namelist%run_timesteps
             vegtype,sigmaf, dlwflx, dswsfc, snet, delt, tg3, cm, ch,   &
             prsl1, prslk1, prslki, prsik1, zf,pblh, dry, wind, slopetyp,    &
             shdmin, shdmax, snoalb, sfalb, flag_iter,con_g,            &
+            namelist%soil_level_bot,namelist%soil_level_thickness,     &
             idveg, iopt_crs, iopt_btr, iopt_run, iopt_sfc, iopt_frz,   &
             iopt_inf, iopt_rad, iopt_alb, iopt_snf, iopt_tbot,iopt_stc,&
             iopt_trs,iopt_diag,latitude_radians, xcoszin, iyrlen, julian, garea, &
