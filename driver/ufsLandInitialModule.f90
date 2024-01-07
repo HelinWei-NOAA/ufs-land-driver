@@ -49,6 +49,7 @@ contains
   
   class(initial_type)  :: this
   type(namelist_type)  :: namelist
+  type (noahmp_type)   :: noahmp
   
   integer :: ncid, dimid, varid, status
   integer :: errflg     ! CCPP error flag
@@ -170,7 +171,7 @@ contains
                             this%soil_moisture%data             , & ! in
                             this%soil_liquid%data               , & ! in
                             this%soil_temperature%data          , & ! in
-                            soiltyp                             , & ! in
+                            noahmp%static%soil_category%data    , & ! in
                             this%soil_moisture_interp%data      , & ! out
                             this%soil_liquid_interp%data        , & ! out
                             this%soil_temperature_interp%data   , & ! out
@@ -229,9 +230,9 @@ contains
   noahmp%state%snow_depth%data             = this%snow_depth * 1000.0  ! driver wants mm
   noahmp%diag%canopy_water%data            = this%canopy_water
   noahmp%state%temperature_radiative%data  = this%skin_temperature
-  noahmp%state%temperature_soil%data       = this%soil_temperature
-  noahmp%state%soil_moisture_vol%data      = this%soil_moisture
-  noahmp%state%soil_liquid_vol%data        = this%soil_liquid
+  noahmp%state%temperature_soil%data       = this%soil_temperature_interp
+  noahmp%state%soil_moisture_vol%data      = this%soil_moisture_interp
+  noahmp%state%soil_liquid_vol%data        = this%soil_liquid_interp
 
   noahmp%model%pbl_height%data               = 1000.0
   noahmp%model%mo_length_inverse%data        = 1.0
