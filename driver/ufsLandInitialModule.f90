@@ -45,6 +45,7 @@ contains
   
   use netcdf
   use ufsLandNoahMPType
+  use module_soil_init
   use error_handling, only : handle_err
   
   class(initial_type)  :: this
