@@ -29,7 +29,7 @@ subroutine ufsLandNoahMPDriverInit(namelist, static, forcing, noahmp)
   if(namelist%restart_simulation) then
     call restart%ReadRestartNoahMP(namelist, noahmp)
   else
-    call initial%ReadInitial(namelist)
+    call initial%ReadInitial(namelist,noahmp)
     call initial%TransferInitialNoahMP(namelist, noahmp)
   end if
   

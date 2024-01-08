@@ -29,7 +29,7 @@ subroutine ufsLandNoahDriverInit(namelist, static, forcing, noah)
   if(namelist%restart_simulation) then
     call restart%ReadRestartNoah(namelist, noah)
   else
-    call initial%ReadInitial(namelist)
+!   call initial%ReadInitial(namelist)
     call initial%TransferInitialNoah(namelist, noah)
   end if
   

@@ -41,7 +41,7 @@ end type initial_type
      
 contains   
 
-  subroutine ReadInitial(this, namelist)
+  subroutine ReadInitial(this, namelist, noahmp)
   
   use netcdf
   use ufsLandNoahMPType
@@ -55,7 +55,7 @@ contains
   integer :: ncid, dimid, varid, status
   integer :: errflg     ! CCPP error flag
   character(len=128) :: errmsg     ! CCPP error message
-  
+
   status = nf90_open(namelist%init_file, NF90_NOWRITE, ncid)
    if (status /= nf90_noerr) call handle_err(status)
   
@@ -164,6 +164,9 @@ contains
    if(status /= nf90_noerr) call handle_err(status)
 ! no need to do any interpolation if this%nlevels = namelist%num_soil_levels
    if(this%nlevels /= namelist%num_soil_levels) then
+     write(98,*) noahmp%static%soil_category%data
+     write(99,*)this%soil_level_nodes,namelist%soil_level_nodes
+     stop
      call noahmp_soil_init (namelist%subset_length              , & ! in
                             namelist%num_soil_levels            , & ! in
                             this%nlevels                        , & ! in
